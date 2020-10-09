@@ -1,16 +1,15 @@
-import React from "react";
-import { ColumnContainer, ColumnTitle } from "./styles";
+import React, { PropsWithChildren } from 'react'
+import { ColumnContainer, ColumnTitle } from './styles'
 
 interface ColumnProps {
   text: string
 }
 
-export const Column = () => {
+export const Column = ({ text, children }: PropsWithChildren<ColumnProps>) => {
   return (
     <ColumnContainer>
-      <ColumnTitle>
-        <div>Column Title</div>
-      </ColumnTitle>
+      <ColumnTitle>{text}</ColumnTitle>
+      {children}
     </ColumnContainer>
   )
 }
