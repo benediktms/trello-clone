@@ -1,8 +1,9 @@
-import React, { PropsWithChildren } from 'react'
-import { ColumnContainer, ColumnTitle } from './styles'
+import React, { PropsWithChildren } from 'react';
+import { AddNewItem } from './AddNewItem';
+import { ColumnContainer, ColumnTitle } from './styles';
 
 interface ColumnProps {
-  text: string
+  text: string;
 }
 
 export const Column = ({ text, children }: PropsWithChildren<ColumnProps>) => {
@@ -10,6 +11,11 @@ export const Column = ({ text, children }: PropsWithChildren<ColumnProps>) => {
     <ColumnContainer>
       <ColumnTitle>{text}</ColumnTitle>
       {children}
+      <AddNewItem
+        toggleButtonText="+ Add another task"
+        onAdd={console.log}
+        dark
+      />
     </ColumnContainer>
-  )
-}
+  );
+};
