@@ -35,6 +35,30 @@ export const AppStateProvider = ({ children }: React.PropsWithChildren<{}>) => {
   );
 };
 
+type Action =
+  | {
+      type: 'ADD_LIST';
+      payload: string;
+    }
+  | {
+      type: 'ADD_TASK';
+      payload: { text: string; listId: string };
+    };
+
+const appStateReducer = (state: AppState, action: Action): AppState => {
+  switch (action.type) {
+    case 'ADD_LIST': {
+      return {
+        ...state,
+      };
+    }
+    case 'ADD_TASK':
+      return {
+        ...state,
+      };
+  }
+};
+
 const appData: AppState = {
   lists: [
     {
