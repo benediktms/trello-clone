@@ -1,4 +1,7 @@
-import React, { createContext, useContext } from 'react';
+import { nanoid } from 'nanoid';
+import React, { createContext, useContext, useReducer } from 'react';
+
+import { findItemIndexById } from './utils/findItemIndexById';
 
 interface Task {
   id: string;
@@ -17,6 +20,7 @@ export interface AppState {
 
 interface AppStateContextProps {
   state: AppState;
+  dispatch: React.Dispatch<Action>;
 }
 
 const AppStateContext = createContext<AppStateContextProps>(
@@ -28,8 +32,10 @@ export const useAppState = () => {
 };
 
 export const AppStateProvider = ({ children }: React.PropsWithChildren<{}>) => {
+  const [state, dispatch] = useReducer(appStateReducer, appData);
+
   return (
-    <AppStateContext.Provider value={{ state: appData }}>
+    <AppStateContext.Provider value={{ state, dispatch }}>
       {children}
     </AppStateContext.Provider>
   );
@@ -43,6 +49,13 @@ type Action =
   | {
       type: 'ADD_TASK';
       payload: { text: string; listId: string };
+    }
+  | {
+      type: 'MOVE_LIST';
+      payload: {
+        dragIndex: number;
+        hoverIndex: number;
+      };
     };
 
 const appStateReducer = (state: AppState, action: Action): AppState => {
@@ -50,12 +63,28 @@ const appStateReducer = (state: AppState, action: Action): AppState => {
     case 'ADD_LIST': {
       return {
         ...state,
+        lists: [
+          ...state.lists,
+          { id: nanoid(), text: action.payload, tasks: [] },
+        ],
       };
     }
-    case 'ADD_TASK':
+    case 'ADD_TASK': {
+      const targetLaneIndex = findItemIndexById(
+        state.lists,
+        action.payload.listId
+      );
+      state.lists[targetLaneIndex].tasks.push({
+        id: nanoid(),
+        text: action.payload.text,
+      });
       return {
         ...state,
       };
+    }
+    default: {
+      return state;
+    }
   }
 };
 
