@@ -1,6 +1,8 @@
 import { nanoid } from 'nanoid';
 import React, { createContext, useContext, useReducer } from 'react';
+import { DragItem } from './DragItem';
 
+import { moveItem } from './moveItem';
 import { findItemIndexById } from './utils/findItemIndexById';
 
 interface Task {
@@ -16,6 +18,7 @@ interface List {
 
 export interface AppState {
   lists: List[];
+  draggedItem: DragItem | undefined;
 }
 
 interface AppStateContextProps {
@@ -56,6 +59,10 @@ type Action =
         dragIndex: number;
         hoverIndex: number;
       };
+    }
+  | {
+      type: 'SET_DRAGGED_ITEM';
+      payload: DragItem | undefined;
     };
 
 const appStateReducer = (state: AppState, action: Action): AppState => {
@@ -82,6 +89,14 @@ const appStateReducer = (state: AppState, action: Action): AppState => {
         ...state,
       };
     }
+    case 'MOVE_LIST': {
+      const { dragIndex, hoverIndex } = action.payload;
+      state.lists = moveItem(state.lists, dragIndex, hoverIndex);
+      return { ...state };
+    }
+    case 'SET_DRAGGED_ITEM': {
+      return { ...state, draggedItem: action.payload };
+    }
     default: {
       return state;
     }
@@ -89,6 +104,7 @@ const appStateReducer = (state: AppState, action: Action): AppState => {
 };
 
 const appData: AppState = {
+  draggedItem: undefined,
   lists: [
     {
       id: '0',
@@ -97,12 +113,12 @@ const appData: AppState = {
     },
     {
       id: '1',
-      text: 'To Do',
+      text: 'In Progress',
       tasks: [{ id: 'c2', text: 'Learn TypeScript' }],
     },
     {
       id: '2',
-      text: 'To Do',
+      text: 'Done',
       tasks: [{ id: 'c3', text: 'Begin to use static typing' }],
     },
   ],
